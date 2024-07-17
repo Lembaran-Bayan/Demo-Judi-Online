@@ -37,29 +37,31 @@ export default function SlotMachine() {
       setSlot4(uniqueNumbers[3]);
     }
 
+    const delay = 40;
+
     const interval1 = setInterval(() => {
       if (isRollingSlot1) {
         setSlot1((prev) => (prev < 9 ? prev + 1 : 0));
       }
-    }, 50);
+    }, delay);
 
     const interval2 = setInterval(() => {
       if (isRollingSlot2) {
         setSlot2((prev) => (prev < 9 ? prev + 1 : 0));
       }
-    }, 50);
+    }, delay);
 
     const interval3 = setInterval(() => {
       if (isRollingSlot3) {
         setSlot3((prev) => (prev < 9 ? prev + 1 : 0));
       }
-    }, 50);
+    }, delay);
 
     const interval4 = setInterval(() => {
       if (isRollingSlot4) {
         setSlot4((prev) => (prev < 9 ? prev + 1 : 0));
       }
-    }, 50);
+    }, delay);
 
     // Cleanup intervals on component unmount
     return () => {
@@ -68,7 +70,7 @@ export default function SlotMachine() {
       clearInterval(interval3);
       clearInterval(interval4);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRollingSlot1, isRollingSlot2, isRollingSlot3, isRollingSlot4]);
 
   if (username)
@@ -100,23 +102,49 @@ export default function SlotMachine() {
           <button
             className="text-[20px] bg-black text-white w-[500px] py-2 mt-10 hover:bg-black/70"
             onClick={() => {
+              if (!isRollingSlot4) {
+                setIsRollingSlot1(true)
+                setIsRollingSlot2(true)
+                setIsRollingSlot3(true)
+                setIsRollingSlot4(true)
+                return;
+              };
               setIsRollingSlot1(false);
-              setSlot1(Math.floor(Math.random() * 10));
+              const adminRoll = Math.floor(Math.random() * 10);
+              if (username == "Admin") {
+                console.log("admin roll! " + adminRoll);
+                setSlot1(adminRoll);
+              } else {
+                setSlot1(Math.floor(Math.random() * 10));
+              }
+
               setTimeout(() => {
-                setSlot2(Math.floor(Math.random() * 10));
+                if (username == "Admin") {
+                  setSlot2(adminRoll);
+                } else {
+                  setSlot2(Math.floor(Math.random() * 10));
+                }
                 setIsRollingSlot2(false);
               }, 500);
               setTimeout(() => {
-                setSlot3(Math.floor(Math.random() * 10));
+                if (username == "Admin") {
+                  setSlot3(adminRoll);
+                } else {
+                  setSlot3(Math.floor(Math.random() * 10));
+                }
                 setIsRollingSlot3(false);
               }, 1000);
               setTimeout(() => {
-                setSlot4(Math.floor(Math.random() * 10));
+                if (username == "Admin") {
+                  setSlot4(adminRoll);
+                } else {
+                  setSlot4(Math.floor(Math.random() * 10));
+                }
                 setIsRollingSlot4(false);
               }, 1500);
             }}
           >
-            Roll
+            {isRollingSlot4 ? "Roll" : "Roll again"}
           </button>
         </section>
       </main>
