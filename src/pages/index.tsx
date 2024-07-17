@@ -1,10 +1,13 @@
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 export default function Home() {
   const [username, setUsername] = useState<string>("");
+  const router = useRouter();
 
   function handleLogin() {
     alert(username);
+    router.push("/slot/" + username)
   }
 
   return (
