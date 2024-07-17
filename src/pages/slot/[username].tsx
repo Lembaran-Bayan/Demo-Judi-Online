@@ -77,7 +77,7 @@ export default function SlotMachine() {
         <section className="p-10">
           <h1 className="text-center text-[40px] mb-20">Demo Judi Online</h1>
           <h1 className="text-center text-[40px]">
-            Welcome, <strong>{username?.slice(0, 1).toUpperCase() + username?.toLowerCase().slice(1)}</strong>
+            Welcome, <strong>{username}</strong>
           </h1>
         </section>
 
