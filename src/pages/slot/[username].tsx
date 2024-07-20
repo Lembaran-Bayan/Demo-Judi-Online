@@ -1,18 +1,22 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function SlotMachine() {
   const router = useRouter();
   const [username, setUsername] = useState<string>("");
-  const [slot1, setSlot1] = useState<number>(10);
-  const [slot2, setSlot2] = useState<number>(10);
-  const [slot3, setSlot3] = useState<number>(10);
-  const [slot4, setSlot4] = useState<number>(10);
+  const [slot1, setSlot1] = useState<number>(0);
+  const [slot2, setSlot2] = useState<number>(0);
+  const [slot3, setSlot3] = useState<number>(0);
+  const [slot4, setSlot4] = useState<number>(0);
 
-  const [isRollingSlot1, setIsRollingSlot1] = useState<boolean>(true);
-  const [isRollingSlot2, setIsRollingSlot2] = useState<boolean>(true);
-  const [isRollingSlot3, setIsRollingSlot3] = useState<boolean>(true);
-  const [isRollingSlot4, setIsRollingSlot4] = useState<boolean>(true);
+  const [isRollingSlot1, setIsRollingSlot1] = useState<boolean>(false);
+  const [isRollingSlot2, setIsRollingSlot2] = useState<boolean>(false);
+  const [isRollingSlot3, setIsRollingSlot3] = useState<boolean>(false);
+  const [isRollingSlot4, setIsRollingSlot4] = useState<boolean>(false);
+
+  const [audioEndTrigger, setAudioEndTrigger] = useState<number>(0);
+
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     setUsername(router.query.username as string);
@@ -73,6 +77,11 @@ export default function SlotMachine() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRollingSlot1, isRollingSlot2, isRollingSlot3, isRollingSlot4]);
 
+  useEffect(() => {
+    audioRef?.current?.play();
+    console.log("play end sound");
+  }, [audioEndTrigger]);
+
   if (username)
     return (
       <main className="font-jakarta">
@@ -103,12 +112,12 @@ export default function SlotMachine() {
             className="text-[20px] bg-black text-white w-[500px] py-2 mt-10 hover:bg-black/70"
             onClick={() => {
               if (!isRollingSlot4) {
-                setIsRollingSlot1(true)
-                setIsRollingSlot2(true)
-                setIsRollingSlot3(true)
-                setIsRollingSlot4(true)
+                setIsRollingSlot1(true);
+                setIsRollingSlot2(true);
+                setIsRollingSlot3(true);
+                setIsRollingSlot4(true);
                 return;
-              };
+              }
               setIsRollingSlot1(false);
               const adminRoll = Math.floor(Math.random() * 10);
               if (username == "Admin") {
@@ -117,6 +126,7 @@ export default function SlotMachine() {
               } else {
                 setSlot1(Math.floor(Math.random() * 10));
               }
+              setAudioEndTrigger((prev) => prev + 1);
 
               setTimeout(() => {
                 if (username == "Admin") {
@@ -125,7 +135,8 @@ export default function SlotMachine() {
                   setSlot2(Math.floor(Math.random() * 10));
                 }
                 setIsRollingSlot2(false);
-              }, 500);
+                setAudioEndTrigger((prev) => prev + 1);
+              }, 800);
               setTimeout(() => {
                 if (username == "Admin") {
                   setSlot3(adminRoll);
@@ -133,7 +144,8 @@ export default function SlotMachine() {
                   setSlot3(Math.floor(Math.random() * 10));
                 }
                 setIsRollingSlot3(false);
-              }, 1000);
+                setAudioEndTrigger((prev) => prev + 1);
+              }, 1600);
               setTimeout(() => {
                 if (username == "Admin") {
                   setSlot4(adminRoll);
@@ -141,12 +153,21 @@ export default function SlotMachine() {
                   setSlot4(Math.floor(Math.random() * 10));
                 }
                 setIsRollingSlot4(false);
-              }, 1500);
+                setAudioEndTrigger((prev) => prev + 1);
+              }, 2400);
             }}
           >
-            {isRollingSlot4 ? "Roll" : "Roll again"}
+            {isRollingSlot4 ? "Roll" : "Start"}
           </button>
         </section>
+
+        <audio ref={audioRef}>
+          <source
+            src="/RollEnd.wav"
+            type="audio/mpeg"
+          />
+          Your browser does not support the audio element.
+        </audio>
       </main>
     );
 }
